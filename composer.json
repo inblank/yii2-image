@@ -1,0 +1,33 @@
+{
+    "name": "inblank/yii2-image",
+    "type": "yii2-extension",
+    "description": "Yii2 inblank/image",
+    "keywords": [
+        "yii2",
+        "image"
+    ],
+    "homepage": "https://github.com/inblank/yii2-image",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Pavel Aleksandrov",
+            "email": "inblank@yandex.ru",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "~2.0.0",
+        "yiisoft/yii2-imagine": "2.0.*"
+    },
+    "require-dev": {
+        "codeception/codeception": "^2.1",
+        "codeception/specify": "~0.4",
+        "codeception/verify": "~0.3",
+        "yiisoft/yii2-codeception": "~2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "inblank\\image\\": "src"
+        }
+    }
+}
