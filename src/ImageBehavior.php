@@ -180,8 +180,8 @@ class ImageBehavior extends Behavior
     public function imageChange($sourceFile)
     {
         if (is_array($sourceFile)) {
-            $sourceFile = current($sourceFile);
             $fileName = key($sourceFile);
+            $sourceFile = current($sourceFile);
         } else {
             $fileName = $sourceFile;
         }
