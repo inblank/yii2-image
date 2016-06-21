@@ -8,7 +8,12 @@
  */
 namespace inblank\image;
 
+use Imagine\Filter\Advanced\Canvas;
+use Imagine\Filter\Transformation;
 use Imagine\Image\Box;
+use Imagine\Image\Color;
+use Imagine\Image\ImageInterface;
+use Imagine\Image\Point;
 use yii;
 use yii\base\Behavior;
 use yii\db\ActiveRecord;
@@ -20,7 +25,12 @@ use yii\db\ActiveRecord;
  */
 class ImageBehavior extends Behavior
 {
-
+    /** Just proportional resize image to fit size */
+    const NONE = 0;
+    /** Crop image resize strategy */
+    const CROP = 1;
+    /** Add frame image resize strategy */
+    const FRAME = 2;
     /**
      * Name of attribute to store the image
      * @var string
@@ -45,6 +55,16 @@ class ImageBehavior extends Behavior
      * @var integer|array
      */
     public $imageSize;
+    /**
+     * Image resize strategy
+     * @var int
+     */
+    public $imageResizeStrategy = self::NONE;
+    /**
+     * Image frame color
+     * @var
+     */
+    public $imageFrameColor = "#FFF";
     /**
      * Calculated absolute image path relative to webroot
      * @var
@@ -201,10 +221,26 @@ class ImageBehavior extends Behavior
             if (!is_array($size)) {
                 $size = [$size, $size];
             }
-            yii\imagine\Image::getImagine()
-                ->open($destinationFile)
-                ->resize(new Box($size[0], $size[1]))
-                ->save($destinationFile);
+            $newBox = new Box($size[0], $size[1]);
+            $image = (new Transformation())->thumbnail(
+                $newBox,
+                $this->imageResizeStrategy == self::CROP ?
+                    ImageInterface::THUMBNAIL_OUTBOUND : ImageInterface::THUMBNAIL_INSET
+            )->apply(yii\imagine\Image::getImagine()->open($destinationFile));
+            $currentBox = $image->getSize();
+            if ($this->imageResizeStrategy === self::FRAME) {
+                $image = (new Transformation())->add(
+                    new Canvas(
+                        yii\imagine\Image::getImagine(),
+                        $newBox,
+                        $size[0] == $currentBox->getWidth() ?
+                            new Point(0, ($size[1] - $currentBox->getHeight()) / 2) :
+                            new Point(($size[0] - $currentBox->getWidth()) / 2, 0),
+                        new Color($this->imageFrameColor)
+                    )
+                )->apply($image);
+            }
+            $image->save($destinationFile);
         }
         $this->owner->setAttribute($this->imageAttribute, $imageName);
         $this->owner->updateAttributes([$this->imageAttribute]);
