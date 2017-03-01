@@ -32,6 +32,8 @@ class ImageBehavior extends Behavior
     const CROP = 1;
     /** Add frame image resize strategy */
     const FRAME = 2;
+    /** Transparent color */
+    const COLOR_TRANSPARENT = null;
     /**
      * Name of attribute to store the image
      * @var string
@@ -240,6 +242,13 @@ class ImageBehavior extends Behavior
             )->apply(yii\imagine\Image::getImagine()->open($destinationFile));
             $currentBox = $image->getSize();
             if ($this->imageResizeStrategy === self::FRAME) {
+                if ($this->imageFrameColor === self::COLOR_TRANSPARENT) {
+                    $frameColor = '#fff';
+                    $alpha = 100;
+                } else {
+                    $frameColor = $this->imageFrameColor;
+                    $alpha = 0;
+                }
                 $image = (new Transformation())->add(
                     new Canvas(
                         yii\imagine\Image::getImagine(),
@@ -247,7 +256,7 @@ class ImageBehavior extends Behavior
                         $size[0] == $currentBox->getWidth() ?
                             new Point(0, ($size[1] - $currentBox->getHeight()) / 2) :
                             new Point(($size[0] - $currentBox->getWidth()) / 2, 0),
-                        new Color($this->imageFrameColor)
+                        new Color($frameColor, $alpha)
                     )
                 )->apply($image);
             }
