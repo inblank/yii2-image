@@ -6,6 +6,7 @@
  * @copyright Copyright (c) 2016 Pavel Aleksandrov <inblank@yandex.ru>
  * @license http://opensource.org/licenses/MIT
  */
+
 namespace inblank\image;
 
 use Imagine\Filter\Advanced\Canvas;
@@ -80,7 +81,17 @@ class ImageBehavior extends Behavior
             ActiveRecord::EVENT_AFTER_INSERT => 'afterSave',
             ActiveRecord::EVENT_AFTER_UPDATE => 'afterSave',
             ActiveRecord::EVENT_AFTER_DELETE => 'afterDelete',
+            ActiveRecord::EVENT_BEFORE_UPDATE => 'beforeUpdate',
         ];
+    }
+
+    /**
+     * Before update action
+     */
+    public function beforeUpdate()
+    {
+        // prevent save empty image name value and also for correct remove old image
+        $this->owner->setAttribute($this->imageAttribute, $this->owner->getOldAttribute($this->imageAttribute));
     }
 
     /**
