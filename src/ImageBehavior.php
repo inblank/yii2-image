@@ -20,9 +20,14 @@ use yii\base\Behavior;
 use yii\db\ActiveRecord;
 
 /**
- * Class Image
+ * Image Behavior Class
  *
  * @property ActiveRecord $owner
+ * @property $imageDefaultUrl URL for default image
+ * @property $imageUrl image URL for model. If model not have image, will equal $imageDefaultUrl
+ * @property $imagePath path for image relative document root
+ * @property $imageAbsolutePath absolute path to image file in filesystem
+ * @property $imageFile full, with absolute path, image file name in filesystem
  */
 class ImageBehavior extends Behavior
 {
@@ -197,10 +202,16 @@ class ImageBehavior extends Behavior
     public function imageChangeByUpload()
     {
         $formName = $this->owner->formName();
-        if (!empty($_FILES[$formName]['tmp_name'][$this->imageAttribute])) {
-            $this->imageChange(
-                [$_FILES[$formName]['name'][$this->imageAttribute] => $_FILES[$formName]['tmp_name'][$this->imageAttribute]]
-            );
+        if ($_POST[$formName][$this->imageAttribute] == 'empty') {
+            // reset image
+            $this->imageReset();
+        } else {
+            // upload new
+            if (!empty($_FILES[$formName]['tmp_name'][$this->imageAttribute])) {
+                $this->imageChange(
+                    [$_FILES[$formName]['name'][$this->imageAttribute] => $_FILES[$formName]['tmp_name'][$this->imageAttribute]]
+                );
+            }
         }
     }
 

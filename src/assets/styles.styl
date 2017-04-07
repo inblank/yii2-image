@@ -1,0 +1,45 @@
+@import "nib"
+
+$imageWidth = 128px
+$imagePadding = 5px
+
+.upload-image
+  text-align center
+  width $imageWidth + $imagePadding * 2
+  box-sizing content-box
+  .btn
+    margin 0 4px
+    font-size 11px
+  .upload-image-reset
+    display none
+
+.upload-image-empty
+  .upload-image-clear
+    display none
+
+.upload-image-preview
+  width $imageWidth
+  height $imageWidth
+  margin $imagePadding auto 10px auto
+  background no-repeat center
+
+.upload-image-crop
+  .upload-image-preview
+    background-size cover
+
+.upload-image-frame
+  .upload-image-preview
+    background-size contain
+
+.upload-image-change
+  position relative
+  overflow hidden
+  input[type=file]
+    position absolute
+    top 0
+    right 0
+    margin: 0;
+    padding: 0;
+    font-size 5rem
+    cursor pointer
+    opacity 0
