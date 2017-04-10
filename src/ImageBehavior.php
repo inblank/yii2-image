@@ -202,7 +202,7 @@ class ImageBehavior extends Behavior
     public function imageChangeByUpload()
     {
         $formName = $this->owner->formName();
-        if ($_POST[$formName][$this->imageAttribute] == 'empty') {
+        if (!empty($_POST[$formName][$this->imageAttribute]) && $_POST[$formName][$this->imageAttribute] == 'empty') {
             // reset image
             $this->imageReset();
         } else {
